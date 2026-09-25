@@ -10,9 +10,8 @@ function Board() {
   const yMapRef = useRef(null);
   const ydocRef = useRef(null);
   const undoManagerRef = useRef(null);
-  const objectsRef = useRef([]); // always mirrors latest `objects`
+  const objectsRef = useRef([]);
 
-  // Keep objectsRef in sync with state on every render
   useEffect(() => {
     objectsRef.current = objects;
   }, [objects]);
@@ -22,7 +21,7 @@ function Board() {
     ydocRef.current = ydoc;
 
     const provider = new WebsocketProvider(
-      "ws://localhost:1234",
+      import.meta.env.VITE_WS_URL || "ws://localhost:1234",
       "collab-board-room",
       ydoc
     );
@@ -52,7 +51,7 @@ function Board() {
   const commit = (updater) => {
     const yObjects = yMapRef.current;
     const ydoc = ydocRef.current;
-    const current = objectsRef.current; // ← local state (includes the in-progress preview), not Yjs
+    const current = objectsRef.current;
     const next = typeof updater === "function" ? updater(current) : updater;
 
     yObjects.doc.transact(() => {
